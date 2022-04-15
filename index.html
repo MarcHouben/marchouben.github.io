@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="nl-NL">
+<head>
+  <title>Progressive Web Apps</title>
+  <meta charset="utf-8" />
+
+  <!-- Zorgen voor weergeven juiste zoom-level v/d webpagina -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+		
+  <!-- Kleur balk bovenaan in de app -->
+  <meta name="theme-color" content="#f3a521">
+		
+  <!-- Icoon links bovenaan in de balk van de app, PNG = OK -->
+  <link rel="icon" href="5hart.png" sizes="192x192">
+		
+  <!-- Inladen van het manifest bestand -->
+  <link rel="manifest" href="manifest.json">
+		
+  <!-- Service Worker registreren -->
+  <script src="pwa.js"></script>
+
+  <!-- Eventuele opmaak -->
+  <link rel="stylesheet" href="pwa.css">
+</head>
+<body>
+  <header>
+    <h1>Progressive Web Apps</h1>
+	  <nav>
+	  </nav>
+  </header>
+  <main>
+    <article>
+      <section>
+        <h2>Boardgames</h2>
+		  <div>
+			<button id="btnGetGames">Haal games op</button>
+		  </div>
+	  </section>
+      <section>
+	  </section>
+	</article>
+  </main>
+  <footer>
+    <section>
+	  <!--<a href="atomics.html">Atomics oefening</a>-->
+	</section>
+  </footer>
+</body>
+</html>

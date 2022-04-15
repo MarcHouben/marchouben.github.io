@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Voorbeeld PWA webpagina</title>
+		
+  <!-- Zorgen voor weergeven juiste zoom-level v/d webpagina -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+		
+  <!-- Mooie kleur balk bovenaan in de app -->
+  <meta name="theme-color" content="#f3a521">
+		
+  <!-- Mooi groot icoon links bovenaan in de balk van de app, PNG = OK -->
+  <link rel="icon" href="5hart.png" sizes="192x192">
+		
+  <!-- Inladen van het manifest bestand -->
+  <link rel="manifest" href="manifest.json">
+		
+  <!-- Service Worker registreren -->
+		<script>
+			window.onload = function(){
+			
+				document.getElementById("btnGetGames").addEventListener(
+					"click",
+					function(ev){
+						let url = 'https://bgg-json.azurewebsites.net/collection/edwalter';
+						fetch(url).then(
+							response => {
+								return response.json();
+							}
+						).then(
+							result => {
+								result = result.map(item=>`<li>${item.name}</li>`)
+									  .join('');
+								document.body.innerHTML += `<ul>${result}</ul>`;
+							}
+						).catch(
+							fout => {
+								console.log(`Ging iets fout: ${fout}`);
+							}
+						);
+					}
+				);
+			
+			
+				if ('serviceWorker' in navigator) {
+					navigator.serviceWorker.register('sw.js').then(
+						registratie=> {
+							console.log(`Registratie gelukt: ${registratie.scope}`);
+	
+							if ('PushManager' in window){
+								console.log("Push berichten worden ondersteund!");						
+								
+								Notification.requestPermission().then(
+									antwoord => {
+										if (antwoord === 'default'){
+											console.log('Helaas; notificatie verzoek weggeklikt');
+											return;
+										}
+										
+										if (antwoord === 'denied'){
+											console.log('Helaas; notificaties geweigerd');
+											return;
+										}
+									
+										if (antwoord==='granted'){
+											console.log('Hoera! We hebben toestemming voor notificaties');
+											
+											// Check bestaande registratie en maak gebruiker:
+											registratie.pushManager.getSubscription().then(
+													sub =>{
+														if (sub === null) {
+															console.log("Er is nog geen geregistreerde Push-gebruiker");
+															maakPushUser(registratie);
+														}
+													}
+											);
+										}
+									}
+								);
+							}
+						}
+					).catch(
+						fout=> {
+							console.log(`Er is iets foutgegaan: ${fout}`);
+						}
+					);
+
+					function maakPushUser(registratie){				   
+						const publicKey = urlBase64ToUint8Array('BO_jVugPTE8AMOQqIGWEPcbJWRKI6nI6IdnH7vLN4_KoPMn9hySs9-w-b4cMytP3Z_YnZeFh2lWqJD2xepMitTY');
+						
+						registratie.pushManager.subscribe(
+							{
+								userVisibleOnly: true,
+								applicationServerKey: publicKey
+							}
+						).then(
+							sub => {
+								updateSubscriptionAtServer(sub);
+								console.log("User geabonneerd op meldingen");
+							}
+						).catch(
+							fout => {
+								console.log(`Abonneren op notificaties niet gelukt: ${fout}`);
+							}
+						);
+					}
+					
+					function updateSubscriptionAtServer(subscriptie){
+						/* Hier schrijven we normaal info naar de server */
+						console.dir(subscriptie);
+					}
+					
+					
+					/**
+					 * urlBase64ToUint8Array -- GOOGLE Functie
+					 * 
+					 * @param {string} base64String a public vavid key
+					 */
+					function urlBase64ToUint8Array(base64String) {
+						var padding = '='.repeat((4 - base64String.length % 4) % 4);
+						var base64 = (base64String + padding)
+							.replace(/\-/g, '+')
+							.replace(/_/g, '/');
+
+						var rawData = window.atob(base64);
+						var outputArray = new Uint8Array(rawData.length);
+
+						for (var i = 0; i < rawData.length; ++i) {
+							outputArray[i] = rawData.charCodeAt(i);
+						}
+						return outputArray;
+					}
+				}
+			}
+		</script>
+</head>
+<body>
+  <header>
+    <h1>Voorbeeld PWA webpagina</h1>
+	  <nav></nav>
+  </header>
+  <main>
+    <article>
+      <section>
+        <h2>Boardgames</h2>
+		  <div>
+			<button id="btnGetGames">Haal games op</button>
+		  </div>
+	  </section>
+      <section>
+	  </section>
+	</article>
+  </main>
+  <footer>
+    <section>
+	  <a href="atomics.html">Atomics oefening</a>
+	</section>
+  </footer>
+</body>
+</html>
