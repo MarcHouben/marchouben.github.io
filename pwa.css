@@ -1,3 +1,12 @@
-body{
-  background-color: lightblue;
+body {
+  margin: 40px;
+  background-color: lightpink;
+}
+
+ul {
+  background-color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
 }
